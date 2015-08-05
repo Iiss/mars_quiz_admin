@@ -3,7 +3,7 @@ from flask.ext.login import login_user, logout_user, login_required, current_use
 from . import auth
 from ..models import User
 from .forms import LoginForm, RegistrationForm, ChangePasswordForm, \
-PasswordResetRequestForm, PasswordResetForm, ChangeEmailForm
+PasswordResetRequestForm, PasswordResetForm, ChangeEmailForm, AddUserForm
 from .. import db
 from ..email import send_email
 
@@ -31,6 +31,22 @@ def logout():
 	logout_user()
 	flash('You have been logged out')
 	return redirect(url_for('main.index'))
+
+@auth.route('/add-user', methods = ['GET','POST'])
+def add_user():
+	form = AddUserForm()
+	if form.validate_on_submit():
+		user = User(email = form.email.data,
+					name = form.name.data,
+					surname = form.name.data)
+		db.session.add(user)
+		db.session.commit()
+		token = user.generate_confirmation_token()
+		send_email(user.email, 'Welcome new user', 
+					'auth/email/confirm', user = user, token = token)
+		flash('A confirmation link has been sent to user')
+		return redirect(url_for('main.index'))
+	return render_template('auth/add_user.html', form = form)
 
 @auth.route('/register', methods = ['GET', 'POST'])
 def register():
