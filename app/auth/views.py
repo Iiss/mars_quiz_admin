@@ -36,50 +36,38 @@ def logout():
 def add_user():
 	form = AddUserForm()
 	if form.validate_on_submit():
-		user = User(email = form.email.data,
-					name = form.name.data,
-					surname = form.name.data)
+		#if user was already invited but was unconfirmed
+		#rewrite user name and surname
+		user = User.query.filter_by(email = form.email.data).first()
+		if user is None:
+			user = User(email = form.email.data)
+		user.name = form.name.data,
+		user.surname = form.surname.data
 		db.session.add(user)
 		db.session.commit()
 		token = user.generate_confirmation_token()
 		send_email(user.email, 'Welcome new user', 
-					'auth/email/confirm', user = user, token = token)
+					'auth/email/register', user = user, token = token)
 		flash('A confirmation link has been sent to user')
 		return redirect(url_for('main.index'))
 	return render_template('auth/add_user.html', form = form)
 
-@auth.route('/register', methods = ['GET', 'POST'])
-def register():
+@auth.route('/register/<token>', methods = ['GET', 'POST'])
+def register(token):
+	user = User.parse_invite_token(token)
+	if user is None:
+		flash('Your invite is invalid or expired')
+		return redirect(url_for('main.index'))
+	if user.confirmed:
+		return redirect(url_for('main.index'))
 	form = RegistrationForm()
 	if form.validate_on_submit():
-		user = User(email = form.email.data,
-					username = form.username.data,
-					password = form.password.data)
+		user.password = form.password.data
+		user.confirmed = True
 		db.session.add(user)
-		db.session.commit()
-		token = user.generate_confirmation_token()
-		send_email(user.email, 'Confirm Your Account', 
-					'auth/email/confirm', user = user, token = token)
-		flash('A confirmation link has been sent to you by email.')
-		return redirect(url_for('main.index'))
+		flash('Congratulation you registered successfully.')
+		return redirect(url_for('auth.login'))
 	return render_template('auth/register.html', form = form)
-
-@auth.route('/confirm/<token>')
-@login_required
-def confirm(token):
-	if current_user.confirmed:
-		return redirect(url_for('main.index'))
-	if current_user.confirm(token):
-		flash('You have confirmed your account. Thanks!')
-	else:
-		flash('The confirmation link is invalid or expired.')
-	return redirect(url_for('main.index'))
-
-@auth.route('/unconfirmed')
-def unconfirmed():
-	if current_user.is_anonymous() or current_user.confirmed:
-		return redirect('main.index')
-	return render_template('auth/unconfirmed.html')
 
 @auth.route('/confirm')
 @login_required

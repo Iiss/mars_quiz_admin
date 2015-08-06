@@ -90,9 +90,21 @@ class User(UserMixin, db.Model):
             return False
         if data.get('confirm') != self.id:
             return False
-        self.confirmed = True
-        db.session.add(self)
         return True
+
+    @staticmethod
+    def parse_invite_token(token):
+        s = Serializer(current_app.config['SECRET_KEY'])
+        try:
+            data = s.loads(token)
+        except:
+            return None
+        user_id = data.get('confirm')
+        if user_id is None:
+            return None
+
+        user = User.query.filter_by(id = user_id).first()
+        return user
 
     def generate_reset_token(self, expiration = 3600):
         s = Serializer(current_app.config['SECRET_KEY'], expiration)
@@ -139,7 +151,7 @@ class User(UserMixin, db.Model):
         return self.can(Permission.ADMINISTER)
 
     def __repr__(self):
-        return '<User %r>' % self.username
+        return '<User %r>' % self.name
 
 class AnonymousUser(AnonymousUserMixin):
     def can(self, permissions):
