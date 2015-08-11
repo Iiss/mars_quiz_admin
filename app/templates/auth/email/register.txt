@@ -1,6 +1,6 @@
 Dear {{ user.name }},
 
-Welcome to Flasky!
+Welcome to MarsQuiz!
 
 To confirm your account please clickon the following link:
 
@@ -8,6 +8,6 @@ To confirm your account please clickon the following link:
 
 Sincerely,
 
-The Flasky Team
+The MarsQuiz Team
 
 Note: replies to this email addess are not monitored.

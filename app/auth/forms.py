@@ -12,9 +12,9 @@ class  LoginForm(Form):
 
 class AddUserForm(Form):
 	email = StringField('Email', validators = [Required(), Length(1, 64), Email()])
-	name = StringField(u'Имя', validators = [Required(), Length(1, 64)])
-	surname = StringField(u'Фамилия', validators = [Required(),Length(1,64)])
-	submit = SubmitField(u'Отправить приглашение')
+	name = StringField('Name', validators = [Required(), Length(1, 64)])
+	surname = StringField('Surname', validators = [Required(),Length(1,64)])
+	submit = SubmitField('Send Invitation')
 
 	def validate_email(self, field):
 		user = User.query.filter_by(email = field.data).first()
