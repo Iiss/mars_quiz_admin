@@ -27,3 +27,10 @@ def index():
     						name = session.get('name'), 
     						known = session.get('known',False),
     						current_time = datetime.utcnow())
+
+@main.route('/user/<int:id>')
+def show_profile(id):
+    user = User.query.filter_by(id = id).first()
+    if user is None:
+        abort(404)
+    return render_template("user.html", user = user)

@@ -1,6 +1,29 @@
 {% extends "base.html" %}
+{% block scripts %}
+{{ super() }}
+{{ moment.include_moment() }}
+{% endblock %}
 {% block page_content %}
 <div class="page-header">
-	<h1>Hello, {{ name }}!</h1>
+	<h1>{{ user.name }} {{user.surname}} ({{user.role.name}})</h1>
+	<p>
+		Status:
+		{% if user.confirmed %}
+			activated
+		{% else %}
+			not activated
+		{% endif %}
+	</p>
+	<p>
+		Email: <a href="mailto:{{ user.email }}">{{ user.email }}</a>
+	</p>
+	<p>
+		Last seen: {{ moment(user.last_seen).format('LLL') }}
+	</p>
 </div>
+{% if user == current_user %}
+<a class="btn btn-default" href="">
+	Edit Profile
+</a>
+{% endif %}
 {% endblock %}

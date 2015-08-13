@@ -4,6 +4,7 @@ from flask.ext.login import UserMixin, AnonymousUserMixin
 from . import db
 from . import login_manager
 from flask import current_app
+from datetime import datetime
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -58,6 +59,7 @@ class User(UserMixin, db.Model):
     role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
     password_hash = db.Column(db.String(128))
     confirmed = db.Column(db.Boolean, default = False)
+    last_seen = db.Column(db.DateTime(), default = datetime.utcnow)
 
     def __init__(self, **kwargs):
         super(User, self).__init__(**kwargs)
@@ -91,6 +93,10 @@ class User(UserMixin, db.Model):
         if data.get('confirm') != self.id:
             return False
         return True
+
+    def ping(self):
+        self.last_seen = datetime.utcnow()
+        db.session.add(self)
 
     @staticmethod
     def parse_invite_token(token):

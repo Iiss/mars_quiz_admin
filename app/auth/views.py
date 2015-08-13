@@ -9,10 +9,8 @@ from ..email import send_email
 
 @auth.before_app_request
 def before_request():
-	if current_user.is_authenticated() \
-			and not current_user.confirmed \
-			and request.endpoint[:5] != 'auth.':
-		return redirect(url_for('auth.unconfirmed'))
+	if current_user.is_authenticated():
+		current_user.ping()
 
 @auth.route('/login', methods = ['GET', 'POST'])
 def login():
@@ -41,7 +39,7 @@ def add_user():
 		user = User.query.filter_by(email = form.email.data).first()
 		if user is None:
 			user = User(email = form.email.data)
-		user.name = form.name.data,
+		user.name = form.name.data
 		user.surname = form.surname.data
 		db.session.add(user)
 		db.session.commit()
