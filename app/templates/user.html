@@ -15,11 +15,13 @@
 		{% endif %}
 	</p>
 	<p>
-		Email: <a href="mailto:{{ user.email }}">{{ user.email }}</a>
-	</p>
-	<p>
 		Last seen: {{ moment(user.last_seen).format('LLL') }}
 	</p>
+	<p>
+		Email: <a href="mailto:{{ user.email }}">{{ user.email }}</a>
+	</p>
+	{% if user.phone_number %}<p>Phone: {{ user.phone_number }}</p>{% endif %}
+	{% if user.organization %}<p>Organization: {{ user.organization }}</p>{% endif %}
 </div>
 {% if user == current_user %}
 <a class="btn btn-default" href="{{ url_for('main.edit_profile') }}">

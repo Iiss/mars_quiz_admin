@@ -35,7 +35,7 @@ def edit_profile():
         return redirect(url_for('main.show_profile',id = user.id))
     form.phone_number.data = user.phone_number
     form.organization.data = user.organization
-    return render_template('edit_profile.html', form = form)
+    return render_template('edit_profile.html', form = form, user = user)
 
 @main.route('/edit-profile/<int:id>', methods = ['GET', 'POST'])
 @login_required

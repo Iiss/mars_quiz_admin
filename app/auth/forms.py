@@ -52,7 +52,7 @@ class PasswordResetForm(Form):
 class ChangeEmailForm(Form):
 	email = StringField('New Email', validators = [Required(), Length(1, 64), Email()])
 	password = PasswordField('Password', validators = [Required()])
-	submit = SubmitField('Reset Password')
+	submit = SubmitField('Update Email')
 
 	def validate_email(self, field):
 		if User.query.filter_by(email = field.data).first():
