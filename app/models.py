@@ -56,6 +56,8 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(64), unique = True, index = True)
     name = db.Column(db.String(64), unique = True, index = True)
     surname = db.Column(db.String(64), unique = True, index = True)
+    phone_number = db.Column(db.String(64))
+    organization = db.Column(db.String(128))
     role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
     password_hash = db.Column(db.String(128))
     confirmed = db.Column(db.Boolean, default = False)

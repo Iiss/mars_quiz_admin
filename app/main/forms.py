@@ -9,6 +9,8 @@ class EditProfileAdminForm(Form):
 	name = StringField('Name', validators = [Required(), Length(1, 64)])
 	surname = StringField('Surname', validators = [Required(),Length(1,64)])
 	role = SelectField('Role', coerce = int)
+	phone_number = StringField('Phone', validators = [Length(0, 64)])
+	organization = StringField('Organization', validators = [Length(0, 64)])
 	submit = SubmitField('Submit')
 
 	def __init__(self, user, *args, **kwargs):
@@ -18,6 +20,6 @@ class EditProfileAdminForm(Form):
 		self.user = user
 		
 	def validate_email(self, field):
-		if field.data != user.email and \
+		if field.data != self.user.email and \
 				User.query.filter_by(email = field.data).first():
 			raise ValidationError('Email is already registered')

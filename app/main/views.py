@@ -1,5 +1,6 @@
 from datetime import datetime
-from flask import render_template, session, redirect, url_for, current_app
+from flask import render_template, session, redirect, url_for, current_app, \
+flash
 from flask.ext.login import login_required
 from . import main
 from .forms import EditProfileAdminForm
@@ -32,11 +33,15 @@ def edit_profile_admin(id):
         user.name = form.name.data
         user.surname = form.surname.data
         user.role = Role.query.get(form.role.data)
+        user.phone_number = form.phone_number.data
+        user.organization = form.organization.data
         db.session.add(user)
         flash('The profile has been updated.')
-        return redirect(url_for('main.user',id = user.id))
+        return redirect(url_for('main.show_profile',id = user.id))
     form.email.data = user.email
     form.name.data = user.name
     form.surname.data = user.surname
     form.role.data = user.role_id
+    form.phone_number.data = user.phone_number
+    form.organization.data = user.organization
     return render_template('edit_profile.html', form = form, user = user)
