@@ -23,3 +23,8 @@ class EditProfileAdminForm(Form):
 		if field.data != self.user.email and \
 				User.query.filter_by(email = field.data).first():
 			raise ValidationError('Email is already registered')
+
+class EditProfileForm(Form):
+	phone_number = StringField('Phone', validators = [Length(0, 64)])
+	organization = StringField('Organization', validators = [Length(0, 64)])
+	submit = SubmitField('Submit')

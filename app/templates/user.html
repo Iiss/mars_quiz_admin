@@ -22,7 +22,7 @@
 	</p>
 </div>
 {% if user == current_user %}
-<a class="btn btn-default" href="">
+<a class="btn btn-default" href="{{ url_for('main.edit_profile') }}">
 	Edit Profile
 </a>
 {% endif %}
