@@ -99,6 +99,15 @@ class User(UserMixin, db.Model):
     def ping(self):
         self.last_seen = datetime.utcnow()
         db.session.add(self)
+    
+    #temp macros
+    @staticmethod
+    def clear_table():
+        user_list = User.query.all()
+        for u in user_list:
+            User.query.filter_by(id=u.id).delete()
+        db.session.commit()
+        print 'User table cleared'
 
     @staticmethod
     def parse_invite_token(token):

@@ -13,8 +13,8 @@ migrate = Migrate(app, db)
 def test():
 	""" Run unit tests """
 	import unittest
-	db.drop_all()
-	db.create_all()
+	#db.drop_all()
+	#db.create_all()
 	test = unittest.TestLoader().discover("tests")
 	unittest.TextTestRunner(verbosity = 2).run(test)
 

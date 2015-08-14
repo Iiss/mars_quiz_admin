@@ -1,10 +1,21 @@
 import unittest
 from app.models import User, AnonymousUser, Role, Permission
 from flask import current_app
-from app import db
+from app import db, create_app
 import time
 
 class UserModelTestCase(unittest.TestCase):
+	def setUp(self):
+		self.app = create_app("testing")
+		self.app_context = self.app.app_context()
+		self.app_context.push()
+		db.create_all()
+		Role.insert_roles()
+
+	def tearDown(self):
+		db.session.remove()
+		db.drop_all()
+		self.app_context.pop()
 
 	def test_password_setter(self):
 		u = User(password = 'cat')
@@ -24,7 +35,7 @@ class UserModelTestCase(unittest.TestCase):
 		u = User(password = 'cat')
 		u2 = User(password = 'cat')
 		self.assertTrue(u.password_hash != u2.password_hash)
-
+	
 	def test_valid_confirmation_token(self):
 		u = User(password = 'cat')
 		db.session.add(u)
@@ -85,7 +96,6 @@ class UserModelTestCase(unittest.TestCase):
 		self.assertTrue(u.email == 'cat@example.com')
 
 	def test_roles_and_permissions(self):
-		Role.insert_roles()
 		u = User(email = 'john@example.com', password = 'cat')
 		self.assertTrue(u.can(Permission.WRITE_ARTICLES))
 		self.assertFalse(u.can(Permission.MODERATE_COMMENTS))
@@ -95,7 +105,6 @@ class UserModelTestCase(unittest.TestCase):
 		self.assertFalse(u.can(Permission.FOLLOW))
 
 	def test_admin_auto_set(self):
-		Role.insert_roles()
 		admin_email = current_app.config['FLASKY_ADMIN']
 		other_email = 'fake%r' % admin_email
 		u1 = User(email = admin_email)
