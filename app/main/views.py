@@ -10,10 +10,8 @@ from ..decorators import admin_required
 
 @main.route('/',methods=['GET','POST'])
 def index():
-    return render_template("index.html",
-    						name = session.get('name'), 
-    						known = session.get('known',False),
-    						current_time = datetime.utcnow())
+    user_list = User.query.all()
+    return render_template("index.html", user_list = user_list)
 
 @main.route('/user/<int:id>')
 def show_profile(id):

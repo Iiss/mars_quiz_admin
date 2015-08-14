@@ -1,17 +1,43 @@
 {% extends "base.html" %}
+{% block scripts %}
+{{ super() }}
+{{ moment.include_moment() }}
+{% endblock %}
 {% block page_content %}
 <div class="page-header">
-	<h1>Hello,
-		{% if current_user.is_authenticated() %}
-			{{ current_user.name }}
-		{% else %}
-			Stranger
+	<h1 class=".col-md-8">Users
+		{% if current_user.is_administrator() %}
+		<span>
+			<a class="btn btn-primary pull-right"
+			href="{{url_for('auth.add_user')}}">Invite user &gt;&gt;</a>
+		</span>
 		{% endif %}
 	</h1>
-	{% if current_user.is_authenticated() %}
-		<p><a href="{{ url_for('auth.change_password') }}">Change Password</a></p>
-	{% else %}
-		<p><a href="{{ url_for('auth.password_reset_request') }}">Fogot Your Password?</a></p>
-	{% endif %}
 </div>
+<table class="table">
+	<thead>
+		<tr>
+			<th>id</th>
+			<th>Full Name</th>
+			<th>Status</th>
+			<th>Last Seen</th>
+		</tr>
+	</thead>
+	<tbody>
+		{% for user in user_list %}
+		<tr>
+			<td>{{user.id}}</td>
+			<td>
+				<a href="{{ url_for('main.show_profile', id = user.id)}}">
+				{% if user.name %}{{ user.name }} {% endif %}
+				{% if user.surname %}{{ user.surname }} {% endif %}
+				&lt;{{ user.email }}&gt;
+				</a>
+			</td>
+			<td>{{user.role.name}}</td>
+			<td>{{ moment(user.last_seen).format('LLL') }}</td>
+		</tr>
+		{% endfor %}
+	</tbody>
+</table>
 {% endblock %}
