@@ -6,6 +6,7 @@ from .forms import LoginForm, RegistrationForm, ChangePasswordForm, \
 PasswordResetRequestForm, PasswordResetForm, ChangeEmailForm, AddUserForm
 from .. import db
 from ..email import send_email
+from ..decorators import admin_required
 
 @auth.before_app_request
 def before_request():
@@ -31,6 +32,8 @@ def logout():
 	return redirect(url_for('main.index'))
 
 @auth.route('/add-user', methods = ['GET','POST'])
+@login_required
+@admin_required
 def add_user():
 	form = AddUserForm()
 	if form.validate_on_submit():

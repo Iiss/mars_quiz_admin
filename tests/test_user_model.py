@@ -1,5 +1,6 @@
 import unittest
 from app.models import User, AnonymousUser, Role, Permission
+from flask import current_app
 from app import db
 import time
 
@@ -92,3 +93,12 @@ class UserModelTestCase(unittest.TestCase):
 	def test_anonymous_user(self):
 		u = AnonymousUser()
 		self.assertFalse(u.can(Permission.FOLLOW))
+
+	def test_admin_auto_set(self):
+		Role.insert_roles()
+		admin_email = current_app.config['FLASKY_ADMIN']
+		other_email = 'fake%r' % admin_email
+		u1 = User(email = admin_email)
+		u2 = User(email = other_email)
+		self.assertTrue(u1.is_administrator())
+		self.assertFalse(u2.is_administrator())
