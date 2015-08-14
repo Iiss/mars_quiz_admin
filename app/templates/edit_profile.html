@@ -8,12 +8,14 @@
 	<h1>Edit Profile</h1>
 </div>
 
+	
+	<div class="col-md-4">
+		{{ wtf.quick_form(form) }}
+	</div>
 {% if user == current_user %}
-<p><a href="{{ url_for('auth.change_email_request') }}">Change Email</a></p>
-<p><a href="{{ url_for('auth.change_password') }}">Change Password</a></p>
-{% endif %}
-
-<div class="col-md-4">
-	{{ wtf.quick_form(form) }}
-</div>
+	<div class="col-md-8" align="right">
+		<p><a href="{{ url_for('auth.change_email_request') }}">Change Email</a></p>
+		<p><a href="{{ url_for('auth.change_password') }}">Change Password</a></p>
+	</div>
+	{% endif %}
 {% endblock %}
