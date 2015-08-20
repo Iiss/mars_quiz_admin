@@ -167,6 +167,9 @@ class User(UserMixin, db.Model):
     def is_administrator(self):
         return self.can(Permission.ADMINISTER)
 
+    def delete(self):
+        db.session.delete(self)
+
     def __repr__(self):
         return '<User %r>' % self.name
 

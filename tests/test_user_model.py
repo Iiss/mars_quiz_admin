@@ -111,3 +111,13 @@ class UserModelTestCase(unittest.TestCase):
 		u2 = User(email = other_email)
 		self.assertTrue(u1.is_administrator())
 		self.assertFalse(u2.is_administrator())
+
+	def test_user_delete(self):
+		u = User()
+		db.session.add(u)
+		db.session.commit()
+		test_id = u.id
+		added_successfully = bool(User.query.filter_by(id = test_id).first())
+		u.delete()
+		self.assertTrue(added_successfully)
+		self.assertTrue(User.query.filter_by(id = test_id).first() is None)
