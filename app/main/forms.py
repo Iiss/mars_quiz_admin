@@ -1,7 +1,7 @@
 from flask.ext.wtf import Form
 from flask.ext.login import current_user
 from wtforms import StringField, PasswordField, BooleanField, SubmitField, \
-ValidationError, SelectField, HiddenField
+ValidationError, SelectField, HiddenField, RadioField
 from wtforms.validators import Required, Email, Length
 from ..models import User, Role
 from urlparse import urlparse, urljoin
@@ -52,6 +52,16 @@ class ConfirmByPasswordForm(Form):
 		if is_safe_url(self.next.data):
 			return redirect(self.next.data)
 		return redirect(url_for(endpoint, **kwargs))
+
+''' Quiz content forms '''
+class CreateQuizForm(Form):
+	title = StringField('Title', validators = [Required(), Length(1, 128)])
+	submit = SubmitField('Create')
+
+class CreateTaskForm(Form):
+	text = StringField('Text', validators = [Required(), Length(1, 128)])
+	answers = RadioField('Answers', choises = [('value','description'),('value_two','whatever')])
+	submit = SubmitField('Create')
 
 
 
