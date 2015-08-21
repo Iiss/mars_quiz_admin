@@ -9,7 +9,9 @@
 		{% if current_user.is_administrator() %}
 		<span>
 			<a class="btn btn-primary pull-right"
-			href="{{url_for('auth.add_user')}}">Invite user &gt;&gt;</a>
+			href="{{url_for('auth.add_user')}}">
+				<span class="glyphicon glyphicon-user"></span> Invite user
+			</a>
 		</span>
 		{% endif %}
 	</h1>
