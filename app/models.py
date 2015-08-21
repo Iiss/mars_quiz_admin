@@ -50,6 +50,14 @@ class Role(db.Model):
     def __repr__(self):
         return '<Role %r>' % self.name
 
+'''class Executive(db.Model):
+    __tablename__ = 'executives'
+    quiz_id = db.Column(db.Integer, db.ForeignKey('quizzes.id'),
+                        primary_key = True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'),
+                        primary_key = True)'''
+
+
 class User(UserMixin, db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key = True)
@@ -62,6 +70,11 @@ class User(UserMixin, db.Model):
     password_hash = db.Column(db.String(128))
     confirmed = db.Column(db.Boolean, default = False)
     last_seen = db.Column(db.DateTime(), default = datetime.utcnow)
+    '''quiz_list = db.relationship('Executive',
+                                 foreign_keys = [Executive.quiz_id],
+                                 backref = db.backref('executives', lazy = 'joined'),
+                                 lazy = 'dynamic',
+                                 cascade = 'all, delete-orphan')'''
 
     def __init__(self, **kwargs):
         super(User, self).__init__(**kwargs)
@@ -181,3 +194,40 @@ class AnonymousUser(AnonymousUserMixin):
         return False
 
 login_manager.anonymous_user = AnonymousUser
+
+''' Quiz content data classes '''
+executives = db.Table('executives',
+    db.Column('quiz_id', db.Integer, db.ForeignKey('quizzes.id'), nullable = False),
+    db.Column('user_id', db.Integer, db.ForeignKey('users.id'), nullable = False)
+)
+
+class Quiz(db.Model):
+    __tablename__ = 'quizzes'
+    id = db.Column(db.Integer, primary_key = True)
+    title = db.Column(db.String(128))
+    publish_allowed = db.Column(db.Boolean, default = False)
+    tasks = db.relationship('Task', backref = 'quiz')
+    executives = db.relationship('User',
+                                  secondary = executives,
+                                  backref = db.backref('quiz_list', lazy = 'dynamic'),
+                                  lazy = 'dynamic')
+    '''user_list = db.relationship('Executive',
+                                 foreign_keys = [Executive.user_id],
+                                 backref = db.backref('quiz_list',lazy = 'joined'),
+                                 lazy = 'dynamic',
+                                 cascade = 'all, delete-orphan')'''
+
+class Task(db.Model):
+    __tablename__ = 'tasks'
+    id = db.Column(db.Integer, primary_key = True)
+    text = db.Column(db.String(128))
+    quiz_id = db.Column(db.Integer, db.ForeignKey('quizzes.id'))
+    answers = db.relationship('Answer', backref = 'task')
+
+class Answer(db.Model):
+    __tablename__ = 'answers'
+    id = db.Column(db.Integer, primary_key = True)
+    task_id = db.Column(db.Integer, db.ForeignKey('tasks.id'))
+    is_correct = db.Column(db.Boolean, default = False)
+
+
