@@ -11,10 +11,8 @@ def load_user(user_id):
     return User.query.get(int(user_id))
 
 class Permission:
-    FOLLOW = 0x01
-    COMMENT = 0x02
-    WRITE_ARTICLES = 0x04
-    MODERATE_COMMENTS = 0x08
+    MANAGE_QUIZ = 0x01
+    PUBLISH = 0x02
     ADMINISTER = 0x80
 
 class Role(db.Model):
@@ -28,13 +26,9 @@ class Role(db.Model):
     @staticmethod
     def insert_roles():
         roles = {
-            'User': (Permission.FOLLOW |
-                     Permission.COMMENT |
-                     Permission.WRITE_ARTICLES, True),
-            'Moderator': (Permission.FOLLOW |
-                          Permission.COMMENT |
-                          Permission.WRITE_ARTICLES |
-                          Permission.MODERATE_COMMENTS, False),
+            'User': (None, True),
+            'Moderator': (Permission.MANAGE_QUIZ |
+                          Permission.PUBLISH, False),
             'Administrator': (0xff, False)
         }
 
