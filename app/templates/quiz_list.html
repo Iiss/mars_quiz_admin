@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% block scripts %}
+{{ super() }}
+{{ moment.include_moment() }}
+{% endblock %}
+{% block page_content %}
+<div class="page-header">
+	<h1 class=".col-md-8">Quiz packs
+		{% if form %}
+		<span>
+			<!--<a class="btn btn-primary pull-right"
+			href="{{url_for('auth.add_user')}}">
+			Create quiz pack
+			</a>-->
+			<button type="button" class="btn btn-primary pull-right" data-toggle="modal" 
+			data-target="#createQuizModal">
+				Create quiz pack
+			</button>
+		</span>
+		{% endif %}
+	</h1>
+</div>
+{% if quiz_list %}
+	<table class="table">
+		<thead>
+			<tr>
+				<th>id</th>
+				<th>Title</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for quiz in quiz_list %}
+			<tr>
+				<td>{{quiz.id}}</td>
+				<td>
+					<a href="">{{ quiz.title }}</a>
+				</td>
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+{% else %}
+	<p>No quiz packs yet.</p>
+{% endif %}
+
+{% if form %}
+<!-- modal -->
+<div id="createQuizModal" class="modal fade" role="dialog">
+	<div class="modal-dialog">
+		<!-- modal content -->
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Create Quiz</h4>
+			</div>
+			<div class="modal-body">
+				{{ wtf.quick_form(form, action=url_for("main.add_quiz")) }}
+			</div>
+		</div>
+	</div>
+</div>
+{% endif%}
+
+{% endblock %}
