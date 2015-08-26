@@ -27,6 +27,8 @@
 			<tr>
 				<th>id</th>
 				<th>Title</th>
+				<th>Tasks total</th>
+				<th>Executives</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -36,6 +38,8 @@
 				<td>
 					<a href="">{{ quiz.title }}</a>
 				</td>
+				<td>{{ quiz.tasks | length }}</td>
+				<td>{{ quiz.executives | list | count }}</td>
 			</tr>
 			{% endfor %}
 		</tbody>
