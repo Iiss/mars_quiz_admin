@@ -60,7 +60,7 @@ class CreateQuizForm(Form):
 
 class CreateTaskForm(Form):
 	text = StringField('Text', validators = [Required(), Length(1, 128)])
-	answers = RadioField('Answers', choises = [('value','description'),('value_two','whatever')])
+	#answers = RadioField('Answers', choises = [('value','description'),('value_two','whatever')])
 	submit = SubmitField('Create')
 
 

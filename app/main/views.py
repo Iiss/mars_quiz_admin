@@ -3,9 +3,10 @@ from flask import render_template, session, redirect, url_for, current_app, \
 flash
 from flask.ext.login import login_required, current_user
 from . import main
-from .forms import EditProfileAdminForm, EditProfileForm, CreateQuizForm
+from .forms import EditProfileAdminForm, EditProfileForm, CreateQuizForm, \
+CreateTaskForm
 from .. import db
-from ..models import User, Role, Permission, Quiz
+from ..models import User, Role, Permission, Quiz, Task
 from ..decorators import admin_required, permission_required
 
 @main.route('/',methods=['GET','POST'])
@@ -72,6 +73,16 @@ def show_quiz_list():
         form = CreateQuizForm()
     return render_template('quiz_list.html', quiz_list = quiz_list, form = form)
 
+@main.route('/quiz/<int:id>')
+@login_required
+def show_quiz(id):
+    form = None
+    quiz = Quiz.query.get_or_404(id)
+    if current_user.can(Permission.MANAGE_QUIZ):
+        is_moderator = True
+        form = CreateTaskForm()
+    return render_template('quiz.html', quiz = quiz, is_moderator = is_moderator, form = form)
+
 @main.route('/add-quiz', methods = ['POST'])
 @login_required
 @permission_required(Permission.MANAGE_QUIZ)
@@ -85,3 +96,17 @@ def add_quiz():
         db.session.add(quiz)
         flash('Quiz "%s" succsessfully created.' % quiz.title)
         return redirect(url_for('main.show_quiz_list'))
+
+@main.route('/quiz/<int:quiz_id>/add_task', methods = ['POST'])
+@login_required
+@permission_required(Permission.MANAGE_QUIZ)
+def add_task(quiz_id):
+    quiz = Quiz.query.get_or_404(quiz_id)
+    form = CreateTaskForm()
+    if form.validate_on_submit():
+        task = Task()
+        task.text = form.text.data
+        quiz.tasks.append(task)
+        db.session.add(task)
+        flash('Task was succsessfully created')
+        return redirect(url_for('main.show_quiz', id = quiz_id))

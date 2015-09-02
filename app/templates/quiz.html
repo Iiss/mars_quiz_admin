@@ -3,70 +3,58 @@
 {% block scripts %}
 {{ super() }}
 {{ moment.include_moment() }}
-<script type="text/javascript">
-$('#createQuizModal').on('hidden.bs.modal', function(e){alert.show('test')})
-</script>
 {% endblock %}
 {% block page_content %}
 <div class="page-header">
-	<h1 class=".col-md-8">Quiz packs
+	<h1 class=".col-md-8">{{ quiz.title }}
 		{% if form %}
 		<span>
-			<!--<a class="btn btn-primary pull-right"
-			href="{{url_for('auth.add_user')}}">
-			Create quiz pack
-			</a>-->
 			<button type="button" class="btn btn-primary pull-right" data-toggle="modal" 
-			data-target="#createQuizModal">
-				Create quiz pack
+			data-target="#createTaskModal">
+				Add Task
 			</button>
 		</span>
 		{% endif %}
 	</h1>
 </div>
-{% if quiz_list %}
-	<table class="table">
+{% if quiz.tasks %}
+<table class="table">
 		<thead>
 			<tr>
 				<th>id</th>
 				<th>Title</th>
-				<th>Tasks total</th>
-				<th>Executives</th>
 			</tr>
 		</thead>
 		<tbody>
-			{% for quiz in quiz_list %}
+			{% for task in quiz.tasks %}
 			<tr>
-				<td>{{quiz.id}}</td>
+				<td>{{task.id}}</td>
 				<td>
-					<a href="{{ url_for('main.show_quiz', id = quiz.id)}}">{{ quiz.title }}</a>
+					<a href="">{{ task.text }}</a>
 				</td>
-				<td>{{ quiz.tasks | length }}</td>
-				<td>{{ quiz.executives | list | count }}</td>
 			</tr>
 			{% endfor %}
 		</tbody>
 	</table>
 {% else %}
-	<p>No quiz packs yet.</p>
+No tasks yet.
 {% endif %}
 
 {% if form %}
 <!-- modal -->
-<div id="createQuizModal" class="modal fade" role="dialog">
+<div id="createTaskModal" class="modal fade" role="dialog">
 	<div class="modal-dialog">
 		<!-- modal content -->
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal">&times;</button>
-				<h4 class="modal-title">Create Quiz</h4>
+				<h4 class="modal-title">Add Task</h4>
 			</div>
 			<div class="modal-body">
-				{{ wtf.quick_form(form, action=url_for("main.add_quiz")) }}
+				{{ wtf.quick_form(form, action=url_for("main.add_task", quiz_id=quiz.id)) }}
 			</div>
 		</div>
 	</div>
 </div>
 {% endif%}
-
 {% endblock %}
